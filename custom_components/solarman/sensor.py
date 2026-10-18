@@ -46,7 +46,7 @@ def _create_entity(coordinator, description, options):
 async def async_setup_entry(_: HomeAssistant, config_entry: ConfigEntry[Coordinator], async_add_entities: AddEntitiesCallback) -> bool:
     _LOGGER.debug(f"async_setup_entry: {config_entry.options}")
 
-    async_add_entities([SolarmanIntervalSensor(config_entry.runtime_data)] + [_create_entity(config_entry.runtime_data, d, config_entry.options).init() for d in config_entry.runtime_data.device.profile.parser.get_entity_descriptions(_PLATFORM)])
+    async_add_entities([SolarmanIntervalSensor(config_entry.runtime_data)] + ([SolarmanPushSensor(config_entry.runtime_data)] if config_entry.runtime_data.push_enabled else []) + [_create_entity(config_entry.runtime_data, d, config_entry.options).init() for d in config_entry.runtime_data.device.profile.parser.get_entity_descriptions(_PLATFORM)])
 
     return True
 
@@ -77,6 +77,20 @@ class SolarmanIntervalSensor(SolarmanSensorEntity):
 
     def update(self):
         self.set_state(self.coordinator.device.state.updated_interval.total_seconds())
+
+class SolarmanPushSensor(SolarmanSensorEntity):
+    def __init__(self, coordinator):
+        super().__init__(coordinator, {"key": "last_push_sensor", "name": "Last Push"})
+        self._attr_entity_category = EntityCategory.DIAGNOSTIC
+        self._attr_device_class = "timestamp"
+        self._attr_icon = "mdi:cloud-upload"
+
+    @property
+    def available(self) -> bool:
+        return True
+
+    def update(self):
+        self.set_state(self.coordinator.push_updated)
 
 class SolarmanSensor(SolarmanSensorEntity):
     def __init__(self, coordinator, sensor):

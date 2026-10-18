@@ -1,31 +1,32 @@
 {
   "config": {
     "abort": {
-      "already_configured": "Urz\u0105dzenie jest ju\u017c skonfigurowane",
-      "already_configured_device": "Urz\u0105dzenie jest ju\u017c skonfigurowane",
+      "already_configured": "Urządzenie jest już skonfigurowane",
+      "already_configured_device": "Urządzenie jest już skonfigurowane",
       "already_in_progress": "Przepływ konfiguracji jest już w toku"
     },
     "error": {
-      "cannot_connect": "Nie uda\u0142o si\u0119 po\u0142\u0105czy\u0107",
-      "invalid_host": "Nieprawid\u0142owa nazwa hosta lub adres IP",
+      "cannot_connect": "Nie udało się połączyć",
+      "invalid_host": "Nieprawidłowa nazwa hosta lub adres IP",
       "timeout_connect": "Przekroczono limit czasu nawiązywania połączenia",
-      "unknown": "Nieznany b\u0142\u0105d"
+      "unknown": "Nieznany błąd",
+      "push_upstream_required": "Tryb proxy wymaga adresu serwera chmury"
     },
     "step": {
       "user": {
-        "title": "Konfiguracja po\u0142\u0105czenia falownika",
+        "title": "Konfiguracja połączenia falownika",
         "data": {
-          "name": "Nazwa urz\u0105dzenia",
+          "name": "Nazwa urządzenia",
           "host": "Host (adres IP lub nazwa hosta)",
           "port": "Port (zwykle 8899)",
           "transport": "Protokół transportowy",
           "lookup_file": "Profil"
         },
         "data_description": {
-          "name": "Ta nazwa b\u0119dzie poprzedza\u0107 wszystkie warto\u015bci parametr\u00f3w (zmie\u0144 wedle uznania)",
+          "name": "Ta nazwa będzie poprzedzać wszystkie wartości parametrów (zmień wedle uznania)",
           "host": "Nazwa hosta lub adres IP urządzenia, z którym chcesz się połączyć",
           "port": "Port (8899) urządzenia, z którym chcesz się połączyć",
-          "lookup_file": "Plik yaml u\u017cywany do definiowania parametr\u00f3w"
+          "lookup_file": "Plik yaml używany do definiowania parametrów"
         },
         "sections": {
           "additional_options": {
@@ -35,9 +36,22 @@
               "mppt": "Liczba MPPT",
               "phase": "Liczba faz",
               "pack": "Liczba pakietów baterii",
-              "battery_nominal_voltage": "Napi\u0119cie znamionowe akumulatora litowo-jonowego",
-              "battery_life_cycle_rating": "Oczekiwany wska\u017anik cyklu \u017cycia akumulatora litowo-jonowego",
+              "battery_nominal_voltage": "Napięcie znamionowe akumulatora litowo-jonowego",
+              "battery_life_cycle_rating": "Oczekiwany wskaźnik cyklu życia akumulatora litowo-jonowego",
               "mb_slave_id": "Modbus Slave ID (zwykle 1)"
+            }
+          },
+          "push": {
+            "name": "Dane wysyłane przez logger (nasłuch chmury)",
+            "data": {
+              "push_mode": "Tryb",
+              "push_port": "Port nasłuchu",
+              "push_upstream": "Serwer chmury (host:port)"
+            },
+            "data_description": {
+              "push_mode": "Odbieraj dane, które logger wysyła do chmury Solarman. Proxy przekazuje je też dalej do chmury, Lokalny potwierdza je tylko w Home Assistant",
+              "push_port": "Port TCP, na którym nasłuchuje Home Assistant (logger domyślnie używa 10000)",
+              "push_upstream": "Oryginalny serwer chmury, np. access3.solarmanpv.com:10000 (tylko tryb proxy)"
             }
           }
         }
@@ -46,14 +60,15 @@
   },
   "options": {
     "error": {
-      "cannot_connect": "Nie uda\u0142o si\u0119 po\u0142\u0105czy\u0107",
-      "invalid_host": "Nieprawid\u0142owa nazwa hosta lub adres IP",
+      "cannot_connect": "Nie udało się połączyć",
+      "invalid_host": "Nieprawidłowa nazwa hosta lub adres IP",
       "timeout_connect": "Przekroczono limit czasu nawiązywania połączenia",
-      "unknown": "Nieznany b\u0142\u0105d"
+      "unknown": "Nieznany błąd",
+      "push_upstream_required": "Tryb proxy wymaga adresu serwera chmury"
     },
     "step": {
       "init": {
-        "title": "Konfiguracja po\u0142\u0105czenia falownika",
+        "title": "Konfiguracja połączenia falownika",
         "data": {
           "host": "Host (adres IP lub nazwa hosta)",
           "port": "Port (zwykle 8899)",
@@ -63,7 +78,7 @@
         "data_description": {
           "host": "Nazwa hosta lub adres IP urządzenia, z którym chcesz się połączyć",
           "port": "Port (8899) urządzenia, z którym chcesz się połączyć",
-          "lookup_file": "Plik yaml u\u017cywany do definiowania parametr\u00f3w"
+          "lookup_file": "Plik yaml używany do definiowania parametrów"
         },
         "sections": {
           "additional_options": {
@@ -73,9 +88,22 @@
               "mppt": "Liczba MPPT",
               "phase": "Liczba faz",
               "pack": "Liczba pakietów baterii",
-              "battery_nominal_voltage": "Napi\u0119cie znamionowe akumulatora litowo-jonowego",
-              "battery_life_cycle_rating": "Oczekiwany wska\u017anik cyklu \u017cycia akumulatora litowo-jonowego",
+              "battery_nominal_voltage": "Napięcie znamionowe akumulatora litowo-jonowego",
+              "battery_life_cycle_rating": "Oczekiwany wskaźnik cyklu życia akumulatora litowo-jonowego",
               "mb_slave_id": "Modbus Slave ID (zwykle 1)"
+            }
+          },
+          "push": {
+            "name": "Dane wysyłane przez logger (nasłuch chmury)",
+            "data": {
+              "push_mode": "Tryb",
+              "push_port": "Port nasłuchu",
+              "push_upstream": "Serwer chmury (host:port)"
+            },
+            "data_description": {
+              "push_mode": "Odbieraj dane, które logger wysyła do chmury Solarman. Proxy przekazuje je też dalej do chmury, Lokalny potwierdza je tylko w Home Assistant",
+              "push_port": "Port TCP, na którym nasłuchuje Home Assistant (logger domyślnie używa 10000)",
+              "push_upstream": "Oryginalny serwer chmury, np. access3.solarmanpv.com:10000 (tylko tryb proxy)"
             }
           }
         }
@@ -89,7 +117,14 @@
         "udp": "UDP",
         "modbus_tcp": "Modbus TCP",
         "modbus_rtu": "Modbus RTU"
-      } 
+      }
+    },
+    "push_mode": {
+      "options": {
+        "disabled": "Wyłączony",
+        "local": "Lokalny (odcięcie chmury)",
+        "proxy": "Proxy (przekazuj do chmury)"
+      }
     }
   },
   "entity": {

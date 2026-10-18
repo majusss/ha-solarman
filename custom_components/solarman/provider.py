@@ -54,6 +54,22 @@ class ConfigurationProvider:
         return self._additional_options.get(CONF_MB_SLAVE_ID, DEFAULT_[CONF_MB_SLAVE_ID])
 
     @cached_property
+    def _push_options(self):
+        return self._options.get(CONF_PUSH, {})
+
+    @cached_property
+    def push_mode(self) -> str:
+        return self._push_options.get(CONF_PUSH_MODE, DEFAULT_[CONF_PUSH_MODE])
+
+    @cached_property
+    def push_port(self) -> int:
+        return self._push_options.get(CONF_PUSH_PORT, DEFAULT_[CONF_PUSH_PORT])
+
+    @cached_property
+    def push_upstream(self) -> str:
+        return self._push_options.get(CONF_PUSH_UPSTREAM, DEFAULT_[CONF_PUSH_UPSTREAM])
+
+    @cached_property
     def directory(self):
         return self.hass.config.path(LOOKUP_DIRECTORY_PATH)
 

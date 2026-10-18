@@ -72,7 +72,7 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
         self._attr_device_class = sensor.get("class") or sensor.get("device_class")
         self._attr_translation_key = sensor.get("translation_key") or slugify(self._attr_name)
         self._attr_unique_id = slugify(self.coordinator.config_entry.entry_id, self._attr_key)
-        self._attr_entity_category = sensor.get("category") or sensor.get("entity_category")
+        self._attr_entity_category = EntityCategory(c) if (c := sensor.get("category") or sensor.get("entity_category")) else None
         self._attr_entity_registry_enabled_default = not "disabled" in sensor
         self._attr_entity_registry_visible_default = not "hidden" in sensor
         self._attr_friendly_name = sensor.get(CONF_FRIENDLY_NAME)
@@ -98,6 +98,11 @@ class SolarmanEntity(SolarmanCoordinatorEntity):
 
         self.attributes = {slugify(x, "sensor"): x for x in attrs} if (attrs := sensor.get("attributes")) is not None else None
         self.registers = sensor.get("registers")
+        self._push = (parser := self.coordinator.device.profile.parser) is not None and parser.is_push(sensor)
+
+    @property
+    def available(self) -> bool:
+        return self.coordinator.push_available if self._push else super().available
 
     def _friendly_name_internal(self) -> str | None:
         name = self.name if self.name is not UNDEFINED else None

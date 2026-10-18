@@ -9,7 +9,8 @@
       "cannot_connect": "Failed to connect",
       "invalid_host": "Invalid hostname or IP address",
       "timeout_connect": "Timeout establishing connection",
-      "unknown": "Unexpected error"
+      "unknown": "Unexpected error",
+      "push_upstream_required": "Proxy mode requires the upstream cloud server address"
     },
     "step": {
       "user": {
@@ -40,6 +41,19 @@
               "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
               "mb_slave_id": "Modbus Slave ID (usually 1)"
             }
+          },
+          "push": {
+            "name": "Logger data push (cloud listener)",
+            "data": {
+              "push_mode": "Mode",
+              "push_port": "Listening port",
+              "push_upstream": "Upstream cloud server (host:port)"
+            },
+            "data_description": {
+              "push_mode": "Receive the data the logger sends to the Solarman cloud. Proxy forwards it to the cloud as well, Local acknowledges it in Home Assistant only",
+              "push_port": "TCP port Home Assistant listens on (logger default is 10000)",
+              "push_upstream": "Original cloud server, e.g. access3.solarmanpv.com:10000 (proxy mode only)"
+            }
           }
         }
       }
@@ -50,7 +64,8 @@
       "cannot_connect": "Failed to connect",
       "invalid_host": "Invalid hostname or IP address",
       "timeout_connect": "Timeout establishing connection",
-      "unknown": "Unexpected error"
+      "unknown": "Unexpected error",
+      "push_upstream_required": "Proxy mode requires the upstream cloud server address"
     },
     "step": {
       "init": {
@@ -70,7 +85,7 @@
         "sections": {
           "additional_options": {
             "name": "Additional options",
-            "data": { 
+            "data": {
               "mod": "Modifier",
               "mppt": "Number of MPPTs",
               "phase": "Number of Phases",
@@ -78,6 +93,19 @@
               "battery_nominal_voltage": "Lithium-ion battery nominal voltage",
               "battery_life_cycle_rating": "Lithium-ion battery expected life cycle rating",
               "mb_slave_id": "Modbus Slave ID (usually 1)"
+            }
+          },
+          "push": {
+            "name": "Logger data push (cloud listener)",
+            "data": {
+              "push_mode": "Mode",
+              "push_port": "Listening port",
+              "push_upstream": "Upstream cloud server (host:port)"
+            },
+            "data_description": {
+              "push_mode": "Receive the data the logger sends to the Solarman cloud. Proxy forwards it to the cloud as well, Local acknowledges it in Home Assistant only",
+              "push_port": "TCP port Home Assistant listens on (logger default is 10000)",
+              "push_upstream": "Original cloud server, e.g. access3.solarmanpv.com:10000 (proxy mode only)"
             }
           }
         }
@@ -91,7 +119,14 @@
         "udp": "UDP",
         "modbus_tcp": "Modbus TCP",
         "modbus_rtu": "Modbus RTU"
-      } 
+      }
+    },
+    "push_mode": {
+      "options": {
+        "disabled": "Disabled",
+        "local": "Local (cut off the cloud)",
+        "proxy": "Proxy (forward to the cloud)"
+      }
     }
   },
   "entity": {

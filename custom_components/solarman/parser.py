@@ -20,6 +20,8 @@ class ParameterParser:
         self._max_size = DEFAULT_[REGISTERS_MAX_SIZE]
         self._digits = DEFAULT_[DIGITS]
         self._requests = None
+        self._push: list[dict] = []
+        self._push_codes: set[int] = set()
         self._previous_result = {}
         self._result = {}
 
@@ -51,11 +53,15 @@ class ParameterParser:
 
         _LOGGER.debug(f"{filename} w/ {'defaults' if 'default' in profile else 'stock values'} for update_interval: {self._update_interval}, code: {self._code}, min_span: {self._min_span}, max_size: {self._max_size}, digits: {self._digits}, parameters: {parameters}")
 
+        if "push" in profile and (push := profile["push"]):
+            self._push = push
+            self._push_codes = {get_request_code(p) for p in push}
+
         table = {r: get_request_code(pr) for pr in profile["requests"] for r in range(pr[REQUEST_START], pr[REQUEST_END] + 1)} if "requests" in profile and not "requests_fine_control" in profile else {}
 
         self._items: list[dict] = [i for i in sorted([preprocess_descriptions(item, group, table, self._code, parameters) for group in profile["parameters"] for item in group["items"]], key = lambda x: (get_code(x, "read", self._code), max(x["registers"])) if x.get("registers") else (-1, -1)) if enforce_parameters(i, parameters)]
 
-        if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i]) and (is_single_code := all_same(items_codes)):
+        if (items_codes := [get_code(i, "read", self._code) for i in self._items if "registers" in i and not self.is_push(i)]) and (is_single_code := all_same(items_codes)):
             self._is_single_code = is_single_code
             self._code = items_codes[0]
 
@@ -72,8 +78,41 @@ class ParameterParser:
     def is_enabled(self, parameters):
         return not "disabled" in parameters
 
+    def is_push(self, parameters):
+        return bool(self._push_codes) and get_code(parameters, "read") in self._push_codes
+
     def is_requestable(self, parameters):
-        return self.is_valid(parameters) and self.is_enabled(parameters) and parameters["rule"] > 0
+        return self.is_valid(parameters) and self.is_enabled(parameters) and parameters["rule"] > 0 and not self.is_push(parameters)
+
+    @property
+    def push_codes(self):
+        return self._push_codes
+
+    def disable_push(self):
+        self._items = [i for i in self._items if not self.is_push(i)]
+        self._push, self._push_codes = [], set()
+
+    def process_push(self, frame: bytes, decode):
+        responses = {}
+
+        for layout in self._push:
+            code = get_request_code(layout)
+            if frame[4] != code or ((length := layout.get("length")) is not None and int.from_bytes(frame[1:3], "little") != length):
+                continue
+            responses[(code, 0)] = decode(frame, layout.get("big_endian"))
+
+        if not responses:
+            return {}
+
+        previous, self._result = self._result, {}
+
+        try:
+            return self.process(responses)
+        except ValueError as e:
+            _LOGGER.debug(f"Pushed data rejected: {strepr(e)}")
+            return {}
+        finally:
+            self._result = previous
 
     def is_scheduled(self, parameters, runtime):
         return "realtime" in parameters or (runtime % (parameters[REQUEST_UPDATE_INTERVAL] if REQUEST_UPDATE_INTERVAL in parameters else self._update_interval) == 0)

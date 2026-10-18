@@ -43,6 +43,7 @@
 - Go to Settings > Devices & services > Integrations
 - Click ADD INTEGRATION, search for and select **Solarman**
 - Enter the appropriate details (should be autodiscovered under most circumstances) and click SUBMIT
+- Optionally enable [☁️ Logger data push](push.md) to also receive the data the logger sends to the cloud
 
 ## 👤 Contributors
 <a href="https://github.com/davidrapan/ha-solarman/graphs/contributors">

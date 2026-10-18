@@ -33,6 +33,18 @@ CONF_PACK = "pack"
 CONF_BATTERY_NOMINAL_VOLTAGE = "battery_nominal_voltage"
 CONF_BATTERY_LIFE_CYCLE_RATING = "battery_life_cycle_rating"
 CONF_MB_SLAVE_ID = "mb_slave_id"
+CONF_PUSH = "push"
+CONF_PUSH_MODE = "push_mode"
+CONF_PUSH_PORT = "push_port"
+CONF_PUSH_UPSTREAM = "push_upstream"
+
+PUSH_MODE_DISABLED = "disabled"
+PUSH_MODE_LOCAL = "local"
+PUSH_MODE_PROXY = "proxy"
+PUSH_MODES = [PUSH_MODE_DISABLED, PUSH_MODE_LOCAL, PUSH_MODE_PROXY]
+PUSH_TIMEOUT = timedelta(minutes = 15)
+PUSH_UPSTREAM_TIMEOUT = 10
+PUSH_ACK_INTERVAL = 0x78
 
 OLD_ = { "name": "name", "serial": "inverter_serial", "sn": "serial", "sn": "sn", CONF_HOST: "inverter_host", CONF_PORT: "inverter_port" }
 
@@ -58,6 +70,9 @@ DEFAULT_ = {
     CONF_PORT: 8899,
     CONF_TRANSPORT: "tcp",
     CONF_MB_SLAVE_ID: 1,
+    CONF_PUSH_MODE: PUSH_MODE_DISABLED,
+    CONF_PUSH_PORT: 10000,
+    CONF_PUSH_UPSTREAM: "",
     CONF_LOOKUP_FILE: "Auto",
     CONF_MOD: 0,
     CONF_MPPT: 4,

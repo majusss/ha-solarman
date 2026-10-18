@@ -42,6 +42,14 @@ CONFIGURATION_SCHEMA = {
             vol.Optional(CONF_MB_SLAVE_ID, default = DEFAULT_[CONF_MB_SLAVE_ID], description = {SUGGESTED_VALUE: DEFAULT_[CONF_MB_SLAVE_ID]}): cv.positive_int
         }),
         {"collapsed": True}
+    ),
+    vol.Required(CONF_PUSH): section(
+        vol.Schema({
+            vol.Optional(CONF_PUSH_MODE, default = DEFAULT_[CONF_PUSH_MODE], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PUSH_MODE]}): SelectSelector(SelectSelectorConfig(options = PUSH_MODES, mode = "dropdown", translation_key = "push_mode")),
+            vol.Optional(CONF_PUSH_PORT, default = DEFAULT_[CONF_PUSH_PORT], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PUSH_PORT]}): cv.port,
+            vol.Optional(CONF_PUSH_UPSTREAM, default = DEFAULT_[CONF_PUSH_UPSTREAM], description = {SUGGESTED_VALUE: DEFAULT_[CONF_PUSH_UPSTREAM]}): str
+        }),
+        {"collapsed": True}
     )
 }
 
@@ -53,6 +61,8 @@ async def data_schema(hass: HomeAssistant, data_schema: dict[str, Any]) -> vol.S
 def validate_connection(user_input: dict[str, Any]) -> dict[str, Any]:
     _LOGGER.debug(f"validate_connection: {user_input}")
     error = "unknown"
+    if (push := user_input.get(CONF_PUSH, {})).get(CONF_PUSH_MODE) == PUSH_MODE_PROXY and not push.get(CONF_PUSH_UPSTREAM):
+        return {"base": "push_upstream_required"}
     try:
         if host := user_input.get(CONF_HOST, IP_ANY):
             getaddrinfo(host, user_input.get(CONF_PORT, DEFAULT_[CONF_PORT]), family = 0, type = 0, proto = 0, flags = 0)
@@ -72,7 +82,7 @@ def validate_connection(user_input: dict[str, Any]) -> dict[str, Any]:
 
 def remove_defaults(user_input: dict[str, Any]):
     for k in list(user_input.keys()):
-        if k == CONF_ADDITIONAL_OPTIONS:
+        if k in (CONF_ADDITIONAL_OPTIONS, CONF_PUSH):
             for l in list(user_input[k].keys()):
                 if user_input[k][l] == DEFAULT_.get(l):
                     del user_input[k][l]
